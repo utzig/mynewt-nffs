@@ -38,6 +38,11 @@ extern struct fs_ops nffs_ops;
 #define OS_MULTIFS_CONTAINER
 #define OS_MULTIFS_SETOPS(x)
 
+#elif __NFFS_SIM__
+
+#define OS_MULTIFS_CONTAINER
+#define OS_MULTIFS_SETOPS(x)
+
 #else
 
 #error "Unsupported OS"

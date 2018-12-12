@@ -1,0 +1,22 @@
+[package]
+name = "nffs-sys"
+version = "0.1.0"
+authors = ["Fabio Utzig <utzig@apache.org>"]
+description = "A NFFS flash filesystem wrapper."
+build = "build.rs"
+publish = false
+
+[build-dependencies]
+cc = "1.0.25"
+
+[dependencies]
+lazy_static = "1.0"
+libc = "0.2.0"
+log = "0.3"
+simflash = { path = "../simflash" }
+crc = "1.8.1"
+
+# Optimize some, even when building for debugging, otherwise the tests
+# are too slow.
+[profile.test]
+opt-level = 1

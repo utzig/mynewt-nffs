@@ -1,0 +1,29 @@
+[package]
+name = "fs_sim"
+version = "0.1.0"
+authors = ["Fabio Utzig <utzig@apache.org>", "David Brown <davidb@davidb.org>"]
+
+[features]
+default = []
+
+[dependencies]
+libc = "0.2.0"
+rand = "0.3.0"
+docopt = "0.8"
+serde = "1.0"
+serde_derive = "1.0"
+log = "0.3"
+env_logger = "0.4"
+simflash = { path = "simflash" }
+nffs-sys = { path = "nffs-sys" }
+base64 = "0.9.2"
+
+# The simulator runs very slowly without optimization.  A value of 1
+# compiles in about half the time, but runs about 5-6 times slower.  2
+# and 3 are hardly different in either compile time or performance.
+# Use 2 in case that makes the code slightly more debuggable.
+[profile.test]
+opt-level = 2
+
+[profile.dev]
+opt-level = 2
