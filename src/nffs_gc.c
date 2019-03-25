@@ -18,6 +18,7 @@
  */
 
 #include <assert.h>
+#include <stdlib.h>
 #include <string.h>
 #include <nffs/nffs.h>
 #include <nffs/os.h>

@@ -18,6 +18,7 @@
  */
 
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <nffs/nffs.h>
@@ -35,7 +36,8 @@ uint32_t nffs_hash_next_block_id;
 int
 nffs_hash_id_is_dir(uint32_t id)
 {
-    return id >= NFFS_ID_DIR_MIN && id < NFFS_ID_DIR_MAX;
+    /* NOTE: assumes dir starts from 0 (default) */
+    return id < NFFS_ID_DIR_MAX;
 }
 
 int

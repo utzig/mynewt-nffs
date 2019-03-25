@@ -423,7 +423,7 @@ nffs_misc_desc_from_flash_area(const struct nffs_flash_desc *flash, int *cnt, st
     max_cnt = *cnt;
     *cnt = 0;
 
-    for (i = 0; i < flash->sector_count; i++) {
+    for (i = 0; i < (int)flash->sector_count; i++) {
         nffs_os_flash_info(flash->id, i, &start, &size);
         if (start >= flash->area_offset && start < flash->area_offset + flash->area_size) {
             if (first_idx == -1) {

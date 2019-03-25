@@ -743,7 +743,7 @@ nffs_inode_read_filename_chunk(const struct nffs_inode *inode,
  */
 int
 nffs_inode_read_filename(struct nffs_inode_entry *inode_entry, size_t max_len,
-                         char *out_name, uint8_t *out_full_len)
+                         char *out_name, uint8_t *out_name_len)
 {
     struct nffs_inode inode;
     int read_len;
@@ -766,6 +766,7 @@ nffs_inode_read_filename(struct nffs_inode_entry *inode_entry, size_t max_len,
     }
 
     out_name[read_len] = '\0';
+    *out_name_len = read_len;
 
     return 0;
 }
@@ -861,7 +862,7 @@ nffs_inode_filename_cmp_ram(const struct nffs_inode *inode,
     off = chunk_len;
     while (*result == 0 && off < short_len) {
         rem_len = short_len - off;
-        if (rem_len > NFFS_INODE_FILENAME_BUF_SZ) {
+        if (rem_len > (int)NFFS_INODE_FILENAME_BUF_SZ) {
             chunk_len = NFFS_INODE_FILENAME_BUF_SZ;
         } else {
             chunk_len = rem_len;
@@ -918,7 +919,7 @@ nffs_inode_filename_cmp_flash(const struct nffs_inode *inode1,
     off = chunk_len;
     while (*result == 0 && off < short_len) {
         rem_len = short_len - off;
-        if (rem_len > NFFS_INODE_FILENAME_BUF_SZ) {
+        if (rem_len > (int)NFFS_INODE_FILENAME_BUF_SZ) {
             chunk_len = NFFS_INODE_FILENAME_BUF_SZ;
         } else {
             chunk_len = rem_len;

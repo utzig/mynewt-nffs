@@ -311,6 +311,10 @@ static void
 nffs_cache_log_block(struct nffs_cache_inode *cache_inode,
                      struct nffs_cache_block *cache_block)
 {
+    /* XXX avoid unused parameter warnings when log disabled */
+    (void)cache_inode;
+    (void)cache_block;
+
     NFFS_LOG(DEBUG, "id=%u inode=%u flash_off=0x%08x "
                     "file_off=%u len=%d (entry=%p)\n",
              (unsigned int)cache_block->ncb_block.nb_hash_entry->nhe_id,
@@ -326,6 +330,9 @@ nffs_cache_log_insert_block(struct nffs_cache_inode *cache_inode,
                             struct nffs_cache_block *cache_block,
                             int tail)
 {
+    /* XXX avoid unused parameter warnings when log disabled */
+    (void)tail;
+
     NFFS_LOG(DEBUG, "caching block (%s): ", tail ? "tail" : "head");
     nffs_cache_log_block(cache_inode, cache_block);
 }
@@ -416,7 +423,7 @@ nffs_cache_seek(struct nffs_cache_inode *cache_inode, uint32_t seek_offset,
         block_end = cache_inode->nci_file_size;
     }
 
-    /* Scan backwards until we find the block containing the seek offest. */
+    /* Scan backwards until we find the block containing the seek offset. */
     while (1) {
         if (block_end <= cache_start) {
             /* We are looking before the start of the cache.  Allocate a new

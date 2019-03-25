@@ -583,14 +583,14 @@ nffs_restore_inode(const struct nffs_disk_inode *disk_inode, uint8_t area_idx,
                     nffs_inode_unsetflags(inode_entry, NFFS_INODE_FLAG_DUMMY);
                 }
             }
- 
+
             /*
              * Update location to reference new location in flash
              */
             inode_entry->nie_hash_entry.nhe_flash_loc =
                                     nffs_flash_loc(area_idx, area_offset);
         }
-        
+
     } else {
         inode_entry = nffs_inode_entry_alloc();
         if (inode_entry == NULL) {
@@ -669,7 +669,7 @@ nffs_restore_inode(const struct nffs_disk_inode *disk_inode, uint8_t area_idx,
         }
 
         if (disk_inode->ndi_parent_id != NFFS_ID_NONE) {
-            
+
             parent = nffs_hash_find_inode(disk_inode->ndi_parent_id);
             /*
              * The parent directory for this inode hasn't been restored yet.
@@ -694,7 +694,7 @@ nffs_restore_inode(const struct nffs_disk_inode *disk_inode, uint8_t area_idx,
             if (rc != 0) {
                 goto err;
             }
-        } 
+        }
 
         if (inode_entry->nie_hash_entry.nhe_id == NFFS_ID_ROOT_DIR) {
             nffs_root_dir = inode_entry;
