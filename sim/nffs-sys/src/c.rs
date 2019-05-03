@@ -104,6 +104,60 @@ pub fn nffs_init_() {
     };
 }
 
+pub fn nffs_write_to_file(flash: &mut SimFlash, adesc: &NffsAreaDesc,
+                          name: &str, buf: &[u8], counter: Option<&mut i32>,
+                          catch_asserts: bool) -> (i32, u8) {
+    let _lock = _LOCK.lock().unwrap();
+
+    unsafe {
+        api::set_flash(flash);
+        raw::c_catch_asserts = if catch_asserts { 1 } else { 0 };
+        raw::c_asserts = 0u8;
+        raw::flash_counter = match counter {
+            None => 0,
+            Some(ref c) => **c as libc::c_int
+        };
+    }
+    let result = unsafe {
+        raw::invoke_write_to_file(adesc.get_c().as_ptr() as *const _,
+                                  name.as_ptr(), name.len() as u8,
+                                  buf.as_ptr(), buf.len() as libc::c_int) as i32
+    };
+    let asserts = unsafe { raw::c_asserts };
+    unsafe {
+        counter.map(|c| *c = raw::flash_counter as i32);
+        api::clear_flash();
+    };
+    (result, asserts)
+}
+
+pub fn nffs_path_rename(flash: &mut SimFlash, adesc: &NffsAreaDesc,
+                        oldname: &str, newname: &str,
+                        counter: Option<&mut i32>, catch_asserts: bool) -> (i32, u8) {
+    let _lock = _LOCK.lock().unwrap();
+
+    unsafe {
+        api::set_flash(flash);
+        raw::c_catch_asserts = if catch_asserts { 1 } else { 0 };
+        raw::c_asserts = 0u8;
+        raw::flash_counter = match counter {
+            None => 0,
+            Some(ref c) => **c as libc::c_int
+        };
+    }
+    let result = unsafe {
+        raw::invoke_path_rename(adesc.get_c().as_ptr() as *const _,
+                                oldname.as_ptr(), newname.as_ptr()) as i32
+    };
+    let asserts = unsafe { raw::c_asserts };
+    unsafe {
+        counter.map(|c| *c = raw::flash_counter as i32);
+        api::clear_flash();
+    };
+    (result, asserts)
+}
+
+
 pub fn nffs_format(flash: &mut SimFlash, adesc: &NffsAreaDesc) -> i32 {
     let _lock = _LOCK.lock().unwrap();
 
@@ -154,6 +208,10 @@ mod raw {
         pub fn nffs_init();
         pub fn invoke_restore(adesc: *const CNffsAreaDesc) -> libc::c_int;
         pub fn invoke_format(adesc: *const CNffsAreaDesc) -> libc::c_int;
+        pub fn invoke_write_to_file(adesc: *const CNffsAreaDesc, name: *const u8,
+                                    namelen: u8, data: *const u8, len: libc::c_int) -> libc::c_int;
+        pub fn invoke_path_rename(adesc: *const CNffsAreaDesc,
+                                  oldname: *const u8, newname: *const u8) -> libc::c_int;
         pub static mut flash_counter: libc::c_int;
         pub static mut c_asserts: u8;
         pub static mut c_catch_asserts: u8;
