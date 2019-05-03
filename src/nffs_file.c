@@ -18,6 +18,7 @@
  */
 
 #include <assert.h>
+#include <stdio.h>
 #include <string.h>
 #include <nffs/nffs.h>
 #include <nffs/os.h>
@@ -77,12 +78,14 @@ nffs_file_new(struct nffs_inode_entry *parent, const char *filename,
 
     rc = nffs_inode_entry_reserve(&inode_entry);
     if (rc != 0) {
+        assert (rc == 0);
         goto err;
     }
 
     rc = nffs_misc_reserve_space(sizeof disk_inode + filename_len,
                                  &area_idx, &offset);
     if (rc != 0) {
+        assert (rc == 0);
         goto err;
     }
 
@@ -105,6 +108,7 @@ nffs_file_new(struct nffs_inode_entry *parent, const char *filename,
 
     rc = nffs_inode_write_disk(&disk_inode, filename, area_idx, offset);
     if (rc != 0) {
+        assert (rc == 0);
         goto err;
     }
 
@@ -117,6 +121,7 @@ nffs_file_new(struct nffs_inode_entry *parent, const char *filename,
     if (parent != NULL) {
         rc = nffs_inode_add_child(parent, inode_entry);
         if (rc != 0) {
+            assert (rc == 0);
             goto err;
         }
     } else {
@@ -159,18 +164,21 @@ nffs_file_open(struct nffs_file **out_file, const char *path,
 
     /* Reject invalid access flag combinations. */
     if (!(access_flags & (FS_ACCESS_READ | FS_ACCESS_WRITE))) {
+        assert(0);
         rc = FS_EINVAL;
         goto err;
     }
     if (access_flags & (FS_ACCESS_APPEND | FS_ACCESS_TRUNCATE) &&
         !(access_flags & FS_ACCESS_WRITE)) {
 
+        assert(0);
         rc = FS_EINVAL;
         goto err;
     }
     if (access_flags & FS_ACCESS_APPEND &&
         access_flags & FS_ACCESS_TRUNCATE) {
 
+        assert(0);
         rc = FS_EINVAL;
         goto err;
     }
@@ -199,6 +207,7 @@ nffs_file_open(struct nffs_file **out_file, const char *path,
         /* Create a new file at the specified path. */
         rc = nffs_file_new(parent, parser.npp_token, parser.npp_token_len, 0,
                            &file->nf_inode_entry);
+        assert(rc == 0);
         if (rc != 0) {
             goto err;
         }
@@ -207,6 +216,7 @@ nffs_file_open(struct nffs_file **out_file, const char *path,
 
         /* Reject an attempt to open a directory. */
         if (nffs_hash_id_is_dir(inode->nie_hash_entry.nhe_id)) {
+            assert(0);
             rc = FS_EINVAL;
             goto err;
         }
@@ -218,6 +228,7 @@ nffs_file_open(struct nffs_file **out_file, const char *path,
             nffs_path_unlink(path);
             rc = nffs_file_new(parent, parser.npp_token, parser.npp_token_len,
                                0, &file->nf_inode_entry);
+            assert(rc == 0);
             if (rc != 0) {
                 goto err;
             }
@@ -229,11 +240,14 @@ nffs_file_open(struct nffs_file **out_file, const char *path,
         }
     } else {
         /* Invalid path. */
+        printf("path=%s, rc=%d\n", path, rc);
+        assert(rc == 0);
         goto err;
     }
 
     if (access_flags & FS_ACCESS_APPEND) {
         rc = nffs_inode_data_len(file->nf_inode_entry, &file->nf_offset);
+        assert(rc == 0);
         if (rc != 0) {
             goto err;
         }

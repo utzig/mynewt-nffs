@@ -89,6 +89,7 @@ nffs_cache_inode_alloc(void)
     struct nffs_cache_inode *entry;
 
     entry = nffs_os_mempool_get(&nffs_cache_inode_pool);
+    assert(entry != NULL);
     if (entry != NULL) {
         memset(entry, 0, sizeof *entry);
         TAILQ_INIT(&entry->nci_block_list);

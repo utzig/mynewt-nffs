@@ -19,6 +19,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include <stdio.h>
 #include <assert.h>
 #include <nffs/nffs.h>
 #include <nffs/os.h>
@@ -97,10 +98,12 @@ nffs_inode_read_disk(uint8_t area_idx, uint32_t offset,
     STATS_INC(nffs_stats, nffs_readcnt_inode);
     rc = nffs_flash_read(area_idx, offset, out_disk_inode,
                          sizeof *out_disk_inode);
+    assert(rc == 0);
     if (rc != 0) {
         return rc;
     }
     if (!nffs_hash_id_is_inode(out_disk_inode->ndi_id)) {
+        printf("ndi_id=0x%x\n", out_disk_inode->ndi_id);
         return FS_EUNEXP;
     }
 
@@ -204,6 +207,7 @@ nffs_inode_from_entry(struct nffs_inode *out_inode,
 
     if (nffs_inode_is_dummy(entry)) {
         nffs_inode_restore_from_dummy_entry(out_inode, entry);
+        assert(0);
         return FS_ENOENT;
     }
 
@@ -211,6 +215,7 @@ nffs_inode_from_entry(struct nffs_inode *out_inode,
                           &area_idx, &area_offset);
 
     rc = nffs_inode_read_disk(area_idx, area_offset, &disk_inode);
+    assert(rc == 0);
     if (rc != 0) {
         return rc;
     }
@@ -238,6 +243,7 @@ nffs_inode_from_entry(struct nffs_inode *out_inode,
         STATS_INC(nffs_stats, nffs_readcnt_inodeent);
         rc = nffs_flash_read(area_idx, area_offset + sizeof disk_inode,
                              out_inode->ni_filename, cached_name_len);
+        assert(rc == 0);
         if (rc != 0) {
             return rc;
         }
@@ -446,7 +452,7 @@ nffs_inode_process_unlink_list(struct nffs_hash_entry **inout_next,
     return 0;
 }
 
-int
+static int
 nffs_inode_delete_from_disk(struct nffs_inode *inode)
 {
     struct nffs_disk_inode disk_inode;

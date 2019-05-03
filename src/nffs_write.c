@@ -253,7 +253,7 @@ nffs_write_append(struct nffs_cache_inode *cache_inode, const void *data,
 
     /*
      * When a new block is appended to a file, the inode must be written
-     * out to flash so the last block id is is stored persistently.
+     * out to flash so the last block id is stored persistently.
      * Need to be written atomically with writing the block out so filesystem
      * remains consistent. nffs_lock is held in nffs_write().
      * The inode will not be updated if it's been unlinked on disk and this

@@ -19,6 +19,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 #include <nffs/nffs.h>
 
 int
@@ -29,6 +30,7 @@ nffs_path_parse_next(struct nffs_path_parser *parser)
     int token_len;
 
     if (parser->npp_token_type == NFFS_PATH_TOKEN_LEAF) {
+        assert(0);
         return FS_EINVAL;
     }
 
@@ -76,11 +78,13 @@ nffs_path_find_child(struct nffs_inode_entry *parent,
 
     SLIST_FOREACH(cur, &parent->nie_child_list, nie_sibling_next) {
         rc = nffs_inode_from_entry(&inode, cur);
+        assert(rc == 0);
         if (rc != 0) {
             return rc;
         }
 
         rc = nffs_inode_filename_cmp_ram(&inode, name, name_len, &cmp);
+        assert(rc == 0);
         if (rc != 0) {
             return rc;
         }
@@ -94,6 +98,7 @@ nffs_path_find_child(struct nffs_inode_entry *parent,
         }
     }
 
+    assert(rc == 0);
     return FS_ENOENT;
 }
 
@@ -119,6 +124,7 @@ nffs_path_find(struct nffs_path_parser *parser,
     while (1) {
         parent = inode_entry;
         rc = nffs_path_parse_next(parser);
+        assert(rc == 0);
         if (rc != 0) {
             return rc;
         }
@@ -128,6 +134,7 @@ nffs_path_find(struct nffs_path_parser *parser,
             if (parent == NULL) {
                 /* First directory must be root. */
                 if (parser->npp_token_len != 0) {
+                    assert(0);
                     return FS_ENOENT;
                 }
 
@@ -140,6 +147,7 @@ nffs_path_find(struct nffs_path_parser *parser,
 
                 rc = nffs_path_find_child(parent, parser->npp_token,
                                           parser->npp_token_len, &inode_entry);
+                assert(rc == 0);
                 if (rc != 0) {
                     goto done;
                 }
@@ -148,6 +156,7 @@ nffs_path_find(struct nffs_path_parser *parser,
         case NFFS_PATH_TOKEN_LEAF:
             if (parent == NULL) {
                 /* First token must be root directory. */
+                assert(0);
                 return FS_ENOENT;
             }
 

@@ -1296,6 +1296,7 @@ nffs_restore_full(const struct nffs_area_desc *area_descs)
     /* Start from a clean state. */
     rc = nffs_misc_reset();
     if (rc) {
+        assert (0);
         return rc;
     }
     nffs_restore_largest_block_data_len = 0;
@@ -1305,6 +1306,7 @@ nffs_restore_full(const struct nffs_area_desc *area_descs)
     for (i = 0; area_descs[i].nad_length != 0; i++) {
         if (i > NFFS_CONFIG_MAX_AREAS) {
             rc = FS_EINVAL;
+            assert (0);
             goto err;
         }
 
@@ -1318,10 +1320,12 @@ nffs_restore_full(const struct nffs_area_desc *area_descs)
 
         case FS_EUNEXP:    /* not formatted with current on-disk NFFS format */
         case FS_ECORRUPT:
+            assert (0);
             use_area = 0;
             break;
 
         default:
+            assert (0);
             goto err;
         }
 
@@ -1340,6 +1344,7 @@ nffs_restore_full(const struct nffs_area_desc *area_descs)
 
             rc = nffs_misc_set_num_areas(nffs_num_areas + 1);
             if (rc != 0) {
+                assert (0);
                 goto err;
             }
 
@@ -1371,6 +1376,7 @@ nffs_restore_full(const struct nffs_area_desc *area_descs)
             if (rc == FS_ENOENT) {
                 rc = FS_ECORRUPT;
             }
+            assert (0);
             goto err;
         }
     }
@@ -1378,18 +1384,21 @@ nffs_restore_full(const struct nffs_area_desc *area_descs)
     /* Ensure this file system contains a valid scratch area. */
     rc = nffs_misc_validate_scratch();
     if (rc != 0) {
+        assert (0);
         goto err;
     }
 
     /* Make sure the file system contains a valid root directory. */
     rc = nffs_misc_validate_root_dir();
     if (rc != 0) {
+        assert (0);
         goto err;
     }
 
     /* Ensure there is a "/lost+found" directory. */
     rc = nffs_misc_create_lost_found_dir();
     if (rc != 0) {
+        assert (0);
         goto err;
     }
 
@@ -1403,6 +1412,7 @@ nffs_restore_full(const struct nffs_area_desc *area_descs)
      */
     rc = nffs_misc_set_max_block_data_len(nffs_restore_largest_block_data_len);
     if (rc != 0) {
+        assert (0);
         goto err;
     }
 

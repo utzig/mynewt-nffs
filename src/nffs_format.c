@@ -19,6 +19,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 #include <nffs/nffs.h>
 #include <nffs/os.h>
 
@@ -73,6 +74,7 @@ nffs_format_area(uint8_t area_idx, int is_scratch)
 
     rc = nffs_os_flash_erase(area->na_flash_id, area->na_offset, area->na_length);
     if (rc != 0) {
+        assert (rc == 0);
         return FS_EHW;
     }
     area->na_cur = 0;
@@ -88,6 +90,7 @@ nffs_format_area(uint8_t area_idx, int is_scratch)
 
     rc = nffs_flash_write(area_idx, 0, &disk_area.nda_magic, write_len);
     if (rc != 0) {
+        assert (rc == 0);
         return rc;
     }
 
@@ -110,25 +113,27 @@ nffs_format_full(const struct nffs_area_desc *area_descs)
     int i;
 
     /* Start from a clean state. */
-    nffs_misc_reset();
+    rc = nffs_misc_reset();
+    assert (rc == 0);
 
     /* Select largest area to be the initial scratch area. */
     nffs_scratch_area_idx = 0;
     for (i = 1; area_descs[i].nad_length != 0; i++) {
         if (i >= NFFS_CONFIG_MAX_AREAS) {
             rc = FS_EINVAL;
+            assert (0);
             goto err;
         }
 
         if (area_descs[i].nad_length >
             area_descs[nffs_scratch_area_idx].nad_length) {
-
             nffs_scratch_area_idx = i;
         }
     }
 
     rc = nffs_misc_set_num_areas(i);
     if (rc != 0) {
+        assert (rc == 0);
         goto err;
     }
 
@@ -153,28 +158,33 @@ nffs_format_full(const struct nffs_area_desc *area_descs)
 
     rc = nffs_misc_validate_scratch();
     if (rc != 0) {
+        assert (rc == 0);
         goto err;
     }
 
     /* Create root directory. */
     rc = nffs_file_new(NULL, "", 0, 1, &nffs_root_dir);
     if (rc != 0) {
+        assert (rc == 0);
         goto err;
     }
 
     /* Create "lost+found" directory. */
     rc = nffs_misc_create_lost_found_dir();
     if (rc != 0) {
+        assert (rc == 0);
         goto err;
     }
 
     rc = nffs_misc_validate_root_dir();
     if (rc != 0) {
+        assert (rc == 0);
         goto err;
     }
 
     rc = nffs_misc_set_max_block_data_len(0);
     if (rc != 0) {
+        assert (rc == 0);
         goto err;
     }
 
