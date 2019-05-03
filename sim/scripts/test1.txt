@@ -1,0 +1,6 @@
+file_open test append
+write_to_file test A 128
+write_to_file test C 128
+write_to_file test D 128
+write_to_file test E 128
+write_to_file test F 128
